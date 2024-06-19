@@ -12,7 +12,7 @@ namespace CapitalPlacementTest.Controllers
         private readonly IApplicationService applicationService = applicationService;
 
         [HttpPost("apply")]
-        public async Task<IActionResult> AddQuestion(ApplicationDto application)
+        public async Task<IActionResult> Apply(ApplicationDto application)
         {
             var result = await applicationService.Apply(application);
             if (!result.Success) return BadRequest(result);
