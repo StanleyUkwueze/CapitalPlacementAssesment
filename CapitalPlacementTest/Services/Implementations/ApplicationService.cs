@@ -20,24 +20,6 @@ namespace CosmosDb.Services
         {
             var container = GetContainerClient();
 
-            //var applicationRecord = new Application
-            //{
-            //    FirstName = application.FirstName,
-            //    LastName = application.LastName,
-            //    Email = application.Email,
-            //    Nationality = application.Nationality,
-            //    Phone = application.Phone,
-            //    DateMovedToUK = application.DateMovedToUK,
-            //    DateOfBirth = application.DateOfBirth,
-            //    IdNumber = application.IdNumber,
-            //    CurrentResidence = application.CurrentResidence,
-            //    MultipleChoiceAnswer = application.MultipleChoiceAnswer,
-            //    UKEmbassyRejectionStatus =application.UKEmbassyRejectionStatus,
-            //    YearOfGraduation = application.YearOfGraduation,
-            //    AboutMe = application.AboutMe,
-            //    Gender = application.Gender,
-            //};
-
            var applicationRecord = mapper.Map<Application>(application);
             var response = await container.CreateItemAsync(applicationRecord, new PartitionKey(applicationRecord.Email));
             if (response.StatusCode is not System.Net.HttpStatusCode.Created) return new ApiResponse<string>
