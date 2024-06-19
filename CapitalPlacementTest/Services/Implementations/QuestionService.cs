@@ -41,13 +41,16 @@ namespace CosmosDb.Services
             var result = new QuestionResponse();
 
             questionDto.Type = QuestionType.ValidateQuestionType(questionDto.Type);
+
             var response = await container.CreateItemAsync(questionDto, new PartitionKey(questionDto.Type));
+
+            var IsCreated = response.StatusCode == System.Net.HttpStatusCode.Created;
             result = mapper.Map<QuestionResponse>(response.Resource);
 
             return new ApiResponse<QuestionResponse>
             {
-                Message = "Question successully created",
-                Success = true,
+                Message = IsCreated ? "Question successfully created" : "Something went wrong",
+                Success = IsCreated ? true : false,
                 Data = result
             };
         }

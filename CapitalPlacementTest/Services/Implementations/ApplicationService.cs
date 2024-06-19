@@ -1,4 +1,5 @@
-﻿using CapitalPlacementTest.Models;
+﻿using AutoMapper;
+using CapitalPlacementTest.Models;
 using CapitalPlacementTest.Requests;
 using CapitalPlacementTest.Responses;
 using CapitalPlacementTest.Services;
@@ -6,10 +7,10 @@ using Microsoft.Azure.Cosmos;
 
 namespace CosmosDb.Services
 {
-    public class ApplicationService(IConfiguration configuration) : IApplicationService
+    public class ApplicationService(IConfiguration configuration, IMapper mapper) : IApplicationService
     {
         private readonly IConfiguration configuration = configuration;
-
+        private readonly IMapper mapper = mapper;
         private readonly string CosmosDBAccountUri = configuration.GetSection("CosmosDbConfiguration:CosmosDBAccountUri").Value!;
         private readonly string CosmosDBAccountPrimaryKey = configuration.GetSection("CosmosDbConfiguration:CosmosDBAccountPrimaryKey").Value!;
         private readonly string CosmosDbName = configuration.GetSection("CosmosDbConfiguration:CosmosDbName").Value!;
@@ -19,31 +20,38 @@ namespace CosmosDb.Services
         {
             var container = GetContainerClient();
 
-            var applicationRecord = new Application
-            {
-                FirstName = application.FirstName,
-                LastName = application.LastName,
-                Email = application.Email,
-                Nationality = application.Nationality,
-                Phone = application.Phone,
-                DateMovedToUK = application.DateMovedToUK,
-                DateOfBirth = application.DateOfBirth,
-                IdNumber = application.IdNumber,
-                CurrentResidence = application.CurrentResidence,
-                MultipleChoiceAnswer = application.MultipleChoiceAnswer,
-                UKEmbassyRejectionStatus =application.UKEmbassyRejectionStatus,
-                YearOfGraduation = application.YearOfGraduation,
-                AboutMe = application.AboutMe,
-                Gender = application.Gender,
-            };
+            //var applicationRecord = new Application
+            //{
+            //    FirstName = application.FirstName,
+            //    LastName = application.LastName,
+            //    Email = application.Email,
+            //    Nationality = application.Nationality,
+            //    Phone = application.Phone,
+            //    DateMovedToUK = application.DateMovedToUK,
+            //    DateOfBirth = application.DateOfBirth,
+            //    IdNumber = application.IdNumber,
+            //    CurrentResidence = application.CurrentResidence,
+            //    MultipleChoiceAnswer = application.MultipleChoiceAnswer,
+            //    UKEmbassyRejectionStatus =application.UKEmbassyRejectionStatus,
+            //    YearOfGraduation = application.YearOfGraduation,
+            //    AboutMe = application.AboutMe,
+            //    Gender = application.Gender,
+            //};
 
+           var applicationRecord = mapper.Map<Application>(application);
             var response = await container.CreateItemAsync(applicationRecord, new PartitionKey(applicationRecord.Email));
+            if (response.StatusCode is not System.Net.HttpStatusCode.Created) return new ApiResponse<string>
+            {
+                Message = "Appologies, something went wrong and your application attempt has failed, Kindly try again",
+                Success = false,
+                Data = "Application attempt failed"
+            };
 
             return new ApiResponse<string>
             {
-                Message = "Success",
+                Message = $"Hi {application.FirstName}, Congratulations, You have successfully applied for this Program",
                 Success = true,
-                Data = $"Hi {application.FirstName}, Congratulations"
+                Data = "Application successful"
             };
         }
 

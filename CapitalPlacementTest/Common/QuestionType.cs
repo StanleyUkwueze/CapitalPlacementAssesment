@@ -31,13 +31,13 @@ namespace CapitalPlacementTest.Common
           return string.Empty;
         }
 
-        public static bool ValidateQuestionType(List<string> choices, string questionType)
+        public static bool ValidateQuestionType(List<string>? choices, string questionType)
         {
             if (
                 !questionType.Equals(DropDownQuestion, StringComparison.OrdinalIgnoreCase) 
                 && 
                 !questionType.Equals(MultipleChoiceQuestion, StringComparison.OrdinalIgnoreCase)
-                && choices.Count > 0
+                && choices?.Count > 0
                 )
             {
                 return false;

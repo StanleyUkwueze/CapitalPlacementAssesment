@@ -2,7 +2,7 @@
 {
     public class CreateQuestionDto
     {
-        public string id { get; set; }
+        public string id { get; set; } = Guid.NewGuid().ToString();
         public string Type { get; set; }
         public List<string>? Choice { get; set; }
         public string Description { get; set; }
